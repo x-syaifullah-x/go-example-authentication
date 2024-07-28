@@ -1,0 +1,197 @@
+openapi: 3.0.0
+info:
+  title: User Authentication API
+  version: 1.0.0
+tags:
+  - name: auth
+servers:s
+  - url: http://localhost:8080/api/auth
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      description: Endpoint to register a new user.
+      parameters:
+        - required: true
+          in: header
+          name: X-API-Key
+          schema:
+            type: string
+            example: RAHASIA
+      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  format: text
+                  example: Example Name
+                username:
+                  type: string
+                  format: text
+                  example: example_username
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: P@ssw0rd!
+                confirm_password:
+                  type: string
+                  format: password
+                  example: P@ssw0rd!
+              required:
+                - name
+                - username
+                - email
+                - password
+      responses:
+        201:
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User registered successfully."
+        400:
+          description: Bad Request - Invalid Input or Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request payload."
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    example: ["email is required.", "password is required."]
+        409:
+          description: Conflict - Email/Username Already Registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    enum:
+                      - Email is already registered.
+                      - Username is already registered.
+        422:
+          description: Unprocessable Entity - Password Too Weak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Password does not meet the required strength."
+        429:
+          description: Too Many Requests - Rate Limiting
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Too many registration attempts. Please try again later."
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Failed to hash password." # or "Failed to save user to database."
+
+  /login:
+    post:
+      summary: Login an existing user
+      description: Endpoint untuk masuk ke dalam sistem dengan kredensial yang benar.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "P@ssw0rd!"
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful."
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "400":
+          description: Bad Request - Invalid Input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request payload."
+        "401":
+          description: Unauthorized - Invalid Credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email or password."
+        "429":
+          description: Too Many Requests - Rate Limiting
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Too many login attempts. Please try again later."
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An error occurred while processing your request."

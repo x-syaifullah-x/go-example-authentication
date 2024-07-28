@@ -1,0 +1,22 @@
+name: GO
+
+on:
+  push:
+    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+  running:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CHECKOUT
+        uses: actions/checkout@v3
+      - name: TEST
+        run: |
+          ls -A
+      # - name: UPLOAD ARTIFACT
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: rootfs-base-system
+      #     path: ~/rootfs-base-system.tar.xz

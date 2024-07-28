@@ -1,0 +1,19 @@
+#! /bin/bash
+
+# INSTALL DATABASE MARIADB-SERVER IF NOT EXIST
+if [ ! $(command -v mysql) ]; then
+  sudo apt install --no-install-suggests --no-install-recommends mariadb-server -y
+fi
+
+PATH_CURRENT_DIR="/$(realpath --relative-to=/ $(dirname $0))"
+
+DB_USER="root"
+DB_PASSWORD="123456"
+DB_NAME="x_test"
+
+# CREATE USER
+# sudo mysql -v -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}'"
+# SET PASSWORD DATABASE
+sudo mysql -u root -v -e "SET PASSWORD FOR '${DB_USER}'@'localhost' = PASSWORD('${DB_PASSWORD}');"
+# CREATE DATABASE
+sudo mysql -u root -v -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME}"
